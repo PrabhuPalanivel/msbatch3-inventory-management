@@ -1,0 +1,16 @@
+   
+spring:
+ profiles: prod
+ jpa:
+  hibernate:
+   ddl-auto : none 
+ datasource:
+  password: root
+  url: jdbc:mysql://localhost:3306/superleague
+  username: root
+        
+jwt:
+ secret: test
+ get:
+  token:
+   uri: /authenticate
