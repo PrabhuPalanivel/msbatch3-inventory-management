@@ -1,11 +1,17 @@
 package com.sl.ms.inventorymanagement.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,14 +20,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.sl.ms.inventorymanagement.model.Inv;
+import com.sl.ms.inventorymanagement.model.Prodt;
 import com.sl.ms.inventorymanagement.model.Product;
 import com.sl.ms.inventorymanagement.service.InvService;
 import com.sl.ms.inventorymanagement.service.ProductService;
@@ -33,6 +44,7 @@ public class ProductController {
 	java.util.Date currentDate = calendar.getTime();
 	java.sql.Date idate = new java.sql.Date(currentDate.getTime());
 	Inv inventoryinput = new Inv();
+	List<Product> supportedproducts;
 
 	@Autowired
 	private ProductService service;
@@ -99,18 +111,19 @@ public class ProductController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
-	
+
 	// Delete a specific product from system
 
 	@DeleteMapping("/products/{id}")
 	public void delete(@PathVariable Integer id) {
 		service.delete(id);
 	}
-	
-	// Fetch the unique list of products supported by system
-	@GetMapping("/supported-products")
-	public List<Product> listSup() {
-		return service.listSupAll();
-	}
 
+	// Fetch the unique list of products supported by system
+		@GetMapping("/supported-products")
+		public List<Prodt> listp() {
+			return service.listSupAll();
+		}
+	
+	
 }

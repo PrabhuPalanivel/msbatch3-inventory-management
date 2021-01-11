@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.sl.ms.inventorymanagement.model.Prodt;
-import com.sl.ms.inventorymanagement.model.Product;
 
-public interface ProductRepository extends JpaRepository<Product, Integer> {
-		public List<Product> findDistinctNameBy();
+public interface ProdtRepository extends JpaRepository<Prodt, Integer> {
 
-	}
+	
+	 @Query("SELECT DISTINCT new Prodt(p.id,p.name) FROM Product p")
+	public List<Prodt> findDistinctProduct();
+}

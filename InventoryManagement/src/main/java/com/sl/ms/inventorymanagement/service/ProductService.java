@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sl.ms.inventorymanagement.model.Prodt;
 import com.sl.ms.inventorymanagement.model.Product;
 
 
@@ -19,12 +20,15 @@ public class ProductService {
 	@Autowired
 	private ProductRepository productrepo;
 	
+	@Autowired
+	private ProdtRepository prodtrepo;
+	
    public List<Product> listAll() {
        return productrepo.findAll();
    }
    
-   public List<Product> listSupAll() {
-       return productrepo.findDistinctNameBy();
+   public List<Prodt> listSupAll() {
+       return prodtrepo.findDistinctProduct();
    }
     
    public void save(Product order) {

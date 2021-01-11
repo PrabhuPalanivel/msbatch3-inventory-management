@@ -7,8 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.SQLDelete;
+
 @Entity
 @Table(name="sl_product")
+@SQLDelete(sql = "UPDATE sl_product set quantity=0 WHERE id=?")
 public class Product {
 	
 	@Id
@@ -42,6 +45,14 @@ public class Product {
 		this.name = name;
 		this.price = price;
 		this.quantity = quantity;
+	}
+	
+	
+
+	public Product(Integer id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
 	}
 
 	public Integer getId() {
