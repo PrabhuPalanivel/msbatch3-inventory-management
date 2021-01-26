@@ -24,6 +24,7 @@ public class ProductService {
 	private ProdtRepository prodtrepo;
 	
    public List<Product> listAll() {
+	   System.out.println("inside ProductService listAll ");
        return productrepo.findAll();
    }
    

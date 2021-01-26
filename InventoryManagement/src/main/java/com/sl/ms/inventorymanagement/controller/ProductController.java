@@ -9,7 +9,10 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,7 +49,11 @@ public class ProductController {
 	java.sql.Date idate = new java.sql.Date(currentDate.getTime());
 	Inv inventoryinput = new Inv();
 	List<Product> supportedproducts;
+	
+	
 
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired
 	private ProductService service;
 
@@ -55,24 +63,28 @@ public class ProductController {
 	// to test the function to fetching product data from csv
 	@GetMapping("/inventorydetails")
 	public List<Inv> listInv() {
+		logger.info("executing getmapping /inventorydetails");
 		return invservice.listAll();
 	}
 
 	// Fetch the list of product inventory in system.
 	@GetMapping("/products")
 	public List<Product> list() {
+		logger.info("executing getmapping /products");
 		return service.listAll();
 	}
 
-// Fetch the specific details of product details by passing product_id
+	// Fetch the specific details of product details by passing product_id
 	@GetMapping("/products/{id}")
 	public Product get(@PathVariable Integer id) {
+		logger.info("executing getmapping /products/{id}");
 		return service.get(id);
 	}
 
 	// Insert a new inventory for s specific product via Rest end point.
 	@PostMapping("/products/{id}")
 	public void add(@RequestBody Product product, @PathVariable Integer id) {
+		logger.info("executing postmapping /products/{id}");
 		service.save(product);
 	}
 
@@ -80,31 +92,30 @@ public class ProductController {
 	@PostMapping("/products")
 	public void add(@RequestBody List<Product> product) {
 		for (Product temp : product) {
+			logger.info("executing postmapping /products");
 			service.save(temp);
 		}
 	}
 
 	// Post data for inventory update as a file. (simple csv)
-	@PostMapping("/products/file")
-	public void uploadFile() {
-		System.out.println("inside Postmapping for inv");
-		String inputjsonString = ReadInputfile.readfile();
-		inventoryinput.setDate(idate);
-		inventoryinput.setFile(inputjsonString.toString());
-		System.out.println("inventoryinput" + inventoryinput);
-		invservice.save(inventoryinput);
-
-		List<Product> readValue = ReadInputfile.jsonProductasObject();
-		for (Product temp : readValue) {
-			System.out.println(temp);
-			service.save(temp);
-		}
-	}
+	/*
+	 * @PostMapping("/products/file") public void uploadFile() {
+	 * logger.info("inside Postmapping for inv");
+	 * System.out.println("inside Postmapping for inv"); String inputjsonString =
+	 * ReadInputfile.readfile(); inventoryinput.setDate(idate);
+	 * inventoryinput.setFile(inputjsonString.toString());
+	 * System.out.println("inventoryinput" + inventoryinput);
+	 * invservice.save(inventoryinput);
+	 * 
+	 * List<Product> readValue = ReadInputfile.jsonProductasObject(); for (Product
+	 * temp : readValue) { System.out.println(temp); service.save(temp); } }
+	 */
 
 	// Update specific product inventory
 	@PutMapping("/products/{id}")
 	public ResponseEntity<?> update(@RequestBody Product order, @PathVariable Integer id) {
 		try {
+			logger.info("executing putmapping /products/{id}");
 			service.save(order);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (NoSuchElementException e) {
@@ -116,13 +127,17 @@ public class ProductController {
 
 	@DeleteMapping("/products/{id}")
 	public void delete(@PathVariable Integer id) {
+		logger.info("executing deletemapping /products/{id}");
 		service.delete(id);
 	}
 
 	// Fetch the unique list of products supported by system
 		@GetMapping("/supported-products")
-		public List<Prodt> listp() {
-			return service.listSupAll();
+		@Cacheable(value="supportedproducts")
+		public List<Prodt> listproducts() {
+			logger.info("executing getmapping /supported-products");
+			 List<Prodt> supportedlist =  service.listSupAll();
+			 return supportedlist;
 		}
 	
 	
