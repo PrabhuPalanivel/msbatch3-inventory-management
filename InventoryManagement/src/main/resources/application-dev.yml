@@ -20,7 +20,7 @@ jwt:
    uri: /authenticate
    
 server:
- port: 8888
+ port: 8877
  servlet:
   context-path: /Dev
 logging:
