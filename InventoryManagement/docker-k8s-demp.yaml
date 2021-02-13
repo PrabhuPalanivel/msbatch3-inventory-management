@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventorymgmt-docker-deployment
+  labels:
+   app: inventorymgmt-docker
+spec:
+  replicas: 1
+  selector:
+   matchLabels:
+    app: inventorymgmt-docker
+  template:
+    metadata:
+      labels:
+        app: inventorymgmt-docker
+    spec:
+      containers:
+        - name: inventorymgmt-docker
+          image: prabhupalanivel/inventorymgmt-docker
+          ports:
+            - containerPort: 8866
